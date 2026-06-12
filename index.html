@@ -49,15 +49,29 @@
     align-items: center;
   }
 
-  /* fundo: foto do produto dominando o lado direito */
+  /* fundo: foto do produto cobrindo toda a hero com degradê */
   #hero::before {
     content: '';
     position: absolute;
-    top: 0; right: -40px; bottom: 0;
-    width: 85%;
-    background: url('https://protocolotripe.online/wp-content/uploads/2026/06/ChatGPT-Image-11-de-jun.-de-2026-22_14_28.png') right center / contain no-repeat;
-    opacity: .38;
+    inset: 0;
+    background: url('https://protocolotripe.online/wp-content/uploads/2026/06/ChatGPT-Image-11-de-jun.-de-2026-22_14_28.png') center 20% / cover no-repeat;
+    opacity: .45;
     pointer-events: none;
+  }
+
+  /* degradê sobre a imagem para legibilidade do texto */
+  #hero .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom,
+        rgba(14,14,14,0.72) 0%,
+        rgba(14,14,14,0.45) 40%,
+        rgba(14,14,14,0.55) 70%,
+        rgba(14,14,14,0.90) 100%
+      );
+    pointer-events: none;
+    z-index: 1;
   }
 
   /* grade sutil */
@@ -695,6 +709,7 @@
 
 <!-- ===== HERO ===== -->
 <section id="hero">
+  <div class="hero-overlay"></div>
   <div class="container">
     <div class="hero-inner">
 
@@ -966,8 +981,7 @@
         <div id="frete-options">
           <p class="form-label" style="margin-bottom:10px;margin-top:4px">Modalidade de envio:</p>
 
-          <div class="frete-option disabled" id="frete-gratis">
-            <div class="frete-badge">ESGOTADO HOJE</div>
+          <div class="frete-option" id="frete-gratis" onclick="selectGratis()">
             <div style="display:flex;align-items:center">
               <div class="frete-radio"></div>
               <div style="flex:1">
@@ -975,8 +989,11 @@
                   <span class="frete-name">Envio Grátis</span>
                   <span class="frete-free-price">R$ 0,00</span>
                 </div>
-                <p class="frete-eta" id="frete-gratis-eta">Envios gratuitos esgotados para hoje</p>
+                <p class="frete-eta" id="frete-gratis-eta">Prazo padrão dos Correios</p>
               </div>
+            </div>
+            <div id="frete-gratis-aviso" style="display:none;margin-top:10px;padding:8px 10px;background:rgba(127,29,29,0.3);border:1px solid rgba(239,68,68,0.3);border-radius:6px;font-size:11px;color:#fca5a5;line-height:1.5">
+              ⚠️ <strong>Envios gratuitos esgotados para hoje.</strong> Selecione o Envio Full para garantir sua amostra.
             </div>
           </div>
 
@@ -1245,8 +1262,18 @@ async function buscarCEP() {
   btn.disabled = false;
 }
 
+function selectGratis() {
+  // Mostra o aviso de esgotado mas não seleciona de verdade
+  document.getElementById('frete-gratis-aviso').style.display = 'block';
+  // Mantém o full selecionado
+  document.getElementById('frete-full').classList.add('selected');
+  document.getElementById('frete-gratis').classList.remove('selected');
+}
+
 function selectFull() {
   document.getElementById('frete-full').classList.add('selected');
+  document.getElementById('frete-gratis').classList.remove('selected');
+  document.getElementById('frete-gratis-aviso').style.display = 'none';
 }
 
 // ===== BUMP TOGGLE =====
