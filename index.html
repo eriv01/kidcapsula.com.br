@@ -49,15 +49,14 @@
     align-items: center;
   }
 
-  /* fundo: foto do produto vazando pelo lado direito */
+  /* fundo: foto do produto dominando o lado direito */
   #hero::before {
     content: '';
     position: absolute;
-    top: 0; right: -20px; bottom: 0;
-    width: 75%;
+    top: 0; right: -40px; bottom: 0;
+    width: 85%;
     background: url('https://protocolotripe.online/wp-content/uploads/2026/06/ChatGPT-Image-11-de-jun.-de-2026-22_14_28.png') right center / contain no-repeat;
-    opacity: .18;
-    filter: blur(1px);
+    opacity: .38;
     pointer-events: none;
   }
 
@@ -81,34 +80,15 @@
     flex-direction: column;
   }
 
-  /* layout em duas colunas — texto + produto visível */
+  /* layout hero — texto full width, imagem apenas no fundo */
   .hero-layout {
-    display: grid;
-    grid-template-columns: 1fr 130px;
-    gap: 0;
-    align-items: center;
+    display: block;
     margin-bottom: 28px;
   }
 
-  .hero-text-col { flex: 1; }
+  .hero-text-col { width: 100%; }
 
-  .hero-product-col {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-left: 8px;
-  }
-
-  .hero-product-img {
-    width: 130px;
-    filter:
-      drop-shadow(0 0 28px rgba(200,160,77,0.55))
-      drop-shadow(0 0 8px rgba(217,119,6,0.3));
-    animation: float 4.5s ease-in-out infinite;
-    position: relative;
-  }
-
-  @keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+  .hero-product-col { display: none; }
 
   .hero-badge {
     display: inline-flex;
@@ -678,7 +658,22 @@
   .footer-links{display:flex;justify-content:center;gap:18px;font-size:9px;color:rgba(245,245,245,0.25)}
   .footer-links a{color:inherit;text-decoration:none}
 
-  /* ANIMAÇÕES DE ENTRADA */
+  /* CHECKOUT oculto por padrão, só aparece no modo checkout */
+  #checkout { display: none; }
+  body.checkout-mode #checkout { display: block; }
+
+  /* LP sections ficam hidden quando checkout ativo */
+  body.checkout-mode #hero,
+  body.checkout-mode #problem,
+  body.checkout-mode #solution,
+  body.checkout-mode #ingredients,
+  body.checkout-mode #benefits,
+  body.checkout-mode #social,
+  body.checkout-mode #offer,
+  body.checkout-mode #transition-zone,
+  body.checkout-mode footer { display: none !important; }
+
+  body.checkout-mode #stock-bar { display: none; }
   .fade-up{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
   .fade-up.visible{opacity:1;transform:translateY(0)}
 
@@ -1151,9 +1146,10 @@ setInterval(decreaseStock, 4500 + Math.random() * 3000);
 function scrollToCheckout() {
   const overlay = document.getElementById('lp-transition');
   overlay.classList.add('active');
-  // Depois de 3s, esconde overlay e rola até checkout
   setTimeout(() => {
     overlay.classList.remove('active');
+    document.body.classList.add('checkout-mode');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' });
   }, 3100);
 }
